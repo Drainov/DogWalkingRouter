@@ -85,7 +85,7 @@ function loadVertex(response, isSource) {
 // function to get the shortest path from the give source and target nodes
 function getRoute() {
 	var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:shortest_path&outputformat=application/json&viewparams=source:
-    ${source};target:${target};`;
+    "${source}";target:${target};`;
 
 	$.getJSON(url, function(data) {
 		map.removeLayer(pathLayer);
