@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset=utf-8 />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+	<title>DogRouting</title>
+	<!--Leaflet -->
+	<link rel="stylesheet" href="leaflet.css"/>
+	<script src="leaflet.js"></script>
+
+	<!-- Sidebar -->
+	<script src="leaflet-sidebar.js"></script>
+	
+	
+	<!--JQuery -->	
+	<link rel="stylesheet" href="http://code.jquery.com/ui/1.13.1/themes/smoothness/jquery-ui.css">
+	<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>	
+	<script src="https://code.jquery.com/ui/1.13.1/jquery-ui.min.js"></script>	
+	
+	
+	<!-- Font -->
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
+
+	<!--A stylesheet for this client-->	
+	<link rel="stylesheet" href="style.css">
+	<!--A stylesheet Sidebar-->	
+	<link rel="stylesheet" href="leaflet-sidebar.css">
+	<link href="https://maxcdn.bootstrapcdn.com/font-awesome/4.1.0/css/font-awesome.min.css" rel="stylesheet">
+</head>
+
+<body>
+<div class="grid-container">
+<!--header-->
+	<div class="top_1">
+	DogRouting 
+	</div>
+<!--Mid-->
+	<div class="mid_2">
+		<div id='DogMap'>
+		<!-- Side Bar -->	
+			<div id="sidebar" class="leaflet-sidebar collapsed">
+				<!-- Nav tabs -->
+				<div class="leaflet-sidebar-tabs">
+					<ul role="tablist">
+						<li><a href="#home" role="tab"><i class="fa fa-bars active"></i></a></li>
+						<li><a href="#routes" role="tab"><i class="fa fa-arrows"></i></a></li>
+						<li><a href="#settings" role="tab"><i class="fa fa-cog"></i></a></li>
+					</ul>
+				</div>
+				<!-- Tab panes -->
+				<div class="leaflet-sidebar-content">
+					<div class="leaflet-sidebar-pane" id="home">
+						<h1 class="leaflet-sidebar-header">
+							Dogrouter
+							<span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+						</h1>
+						<p>A dogwalking application </p>
+						<p>Find the best route for you and your dog</p>
+						<h2>Credits</h2>
+					</div>
+					<div class="leaflet-sidebar-pane" id="routes">
+						<h1 class="leaflet-sidebar-header">
+							Routes
+							<span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+						</h1>
+						<p>
+							test
+						</p>
+					</div>
+					<div class="leaflet-sidebar-pane" id="settings">
+						<h1 class="leaflet-sidebar-header">
+							Settings
+							<span class="leaflet-sidebar-close"><i class="fa fa-caret-left"></i></span>
+						</h1>
+						<p>
+							test
+						</p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+<!--footer-->
+	<div class="bot_3">
+	</div>
+
+</div>
+</body>
+
+
+
+<!--javascript-->
+
+<!--THe Leaflet app-->
+
+<script src="Routing.js">
+
+</script>
+
+</html>

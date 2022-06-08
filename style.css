@@ -1,0 +1,57 @@
+body, html {
+  font-family: 'Montserrat', sans-serif;
+  padding: 0;
+  margin: 0;
+  background-color: #8a8a8a;
+  overflow: hidden;
+}
+
+.top_1 { grid-area: header; 
+  height: 0vh;
+  position: static;
+  }
+.mid_2 { grid-area: main; 
+  height: 100vh;
+  position: relative;
+  }
+.bot_3 { grid-area: footer; 
+  height: 5vh;
+  position: static;
+  }
+.bot_3 { grid-area: footer; 
+    height: 5vh;
+    position: static;
+    }
+.grid-container {
+  display: grid;
+  grid-template-areas:
+    ' header header header header header'
+    ' main main main main main'
+    ' footer footer footer footer footer';
+  gap: 0px;
+  background-color: #7e92a1;
+  padding: 1px;
+  box-shadow:0px 0px 10px #49464666;
+}
+.grid-container > div {
+  background-color: rgba(255, 255, 255, 0.8);
+  text-align: center;
+  padding: 1px 0;
+  font-size: 30px;
+  box-shadow:0px 0px 10px #49464666;
+}
+
+#DogMap {
+  position: absolute;
+  z-index: 400;
+  width: 100%;
+  top: 0;
+  bottom: 0;
+  right: 0;
+  left: 0;
+}
+
+#h1 {
+  text-align: top;
+  font-size: 4vw;
+}
