@@ -6,6 +6,13 @@ var selectedPoint = null;
 var source = null;
 var target = null;
 
+// travel points
+var point_1 = null;
+var point_2 = null;
+var point_3 = null;
+var point_4 = null;
+var point_5 = null;
+
 //initialize map & sidebar
 var map = L.map('DogMap', { 
     center:[52, 5], 
