@@ -1,0 +1,34 @@
+--ALTER TABLE utrecht_osm_2po_4pgr ADD COLUMN "cost_greenery" float;
+
+--SELECT id  FROM utrecht_osm_2po_4pgr INNER JOIN pois
+	--ON ST_DWithin(utrecht_osm_2po_4pgr.geom , pois.geom , 30)
+
+
+
+
+
+--First test for cost calculation
+--pois.geom is the POI table geometry
+
+ALTER TABLE utrecht_osm_2po_4pgr ADD COLUMN "cost_total" float;
+ALTER TABLE utrecht_osm_2po_4pgr ADD COLUMN "cost_greenery" float;
+ALTER TABLE utrecht_osm_2po_4pgr ADD COLUMN "cost_amenities" float;
+
+UPDATE utrecht_osm_2po_4pgr SET cost_greenery =
+CASE WHEN ST_DWithin(utrecht_osm_2po_4pgr.geom , pois_greenery.geom , 30)
+THEN
+	cost/1000
+ELSE
+	cost
+END;
+
+UPDATE utrecht_osm_2po_4pgr SET cost_amenities =
+CASE WHEN ST_DWithin(utrecht_osm_2po_4pgr, pois_amenities.geom, 30)
+THEN
+	cost/1000
+ELSE
+	cost
+END;
+
+UPDATE utrecht_osm_2po_4pgr SET cost_total = cost_greenery + cost_amenities;
+
