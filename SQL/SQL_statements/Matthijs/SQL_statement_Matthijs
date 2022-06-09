@@ -1,0 +1,17 @@
+#Nearset vertex on standard OSM2PO dataset
+SELECT
+  v.id,
+  v.geom_way,
+  string_agg(distinct(v.osm_name),',') AS name
+FROM
+  edges AS v
+WHERE
+  v.id = (SELECT 
+        id
+        fROM edges 
+        ORDER BY geom_way <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
+
+
+GROUP BY v.id, v.geom_way
+
+#shortest dijkstra OSM2PO dataset
