@@ -15,3 +15,24 @@ WHERE
 GROUP BY v.id, v.geom_way
 
 #shortest dijkstra OSM2PO dataset
+SELECT
+ min(r.seq) AS seq,
+ e.id AS id,
+ e.osm_name,
+ e.clazz,
+ sum(e.cost) AS distance,
+ST_Collect(e.geom_way) AS geom 
+ FROM pgr_dijkstra('SELECT id,source,target, cost 
+ FROM edges', (Select source FROM edges WHERE id = %source%),  (Select target FROM edges WHERE id = %target%), false) AS r,edges AS e WHERE r.edge=e.id GROUP BY e.id,e.osm_name,e.clazz
+
+#test dijkstra
+SELECT
+ min(r.seq) AS seq,
+ e.id AS id,
+ e.osm_name,
+ e.clazz,
+ e.source,
+ e.target,
+ sum(e.cost) AS distance,
+ST_Collect(e.geom_way) AS geom 
+ FROM pgr_dijkstra('SELECT id, source, target, cost FROM edges ',  (Select source FROM edges WHERE id = 1),  (Select target FROM edges WHERE id = 450), false) AS r,edges AS e WHERE r.edge=e.id GROUP BY e.id,e.osm_name,e.clazz
