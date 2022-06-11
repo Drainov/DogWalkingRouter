@@ -28,6 +28,42 @@ var OpenStreetMap = L.tileLayer(
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
 ).addTo(map);
+//Jquerry slide bar for distance
+$( function() {
+    $( "#slider-range-max" ).slider({
+      range: "max",
+      min: 0.5,
+      max: 10,
+      value: 0.5,
+	  step: 0.5,
+      slide: function( event, ui ) {
+        $( "#amount" ).val( ui.value );
+      }
+    });
+    $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
+  } );
+
+//Jquerry input bar (needs a response from the server)
+$( function() {
+    function log( message ) {
+      $( "<div>" ).text( message ).prependTo( "#log" );
+      $( "#log" ).scrollTop( 0 );
+	}
+});
+
+//Jquerry settings menu
+$( function() {
+    $( "#speed" ).selectmenu();
+ 
+    $( "#files" ).selectmenu();
+ 
+    $( "#number" )
+      .selectmenu()
+      .selectmenu( "menuWidget" )
+      .addClass( "overflow" );
+  } );
+//Jquerry routing button
+$( "#RoutingSP" ).controlgroup();
 
 // shortest path layer geojson
 var pathLayer = L.geoJSON(null);
