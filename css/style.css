@@ -72,3 +72,17 @@ label {
   display: inline-block;
   font-size: 14px;
 }
+
+#button{
+  top: 160px;
+  left: 40px;
+  position:fixed;
+  z-index:999;
+  font-size: 1em;
+  padding: 10px 20px;
+}
+
+#Routing_test{
+  transform: scale(1.8);
+  margin-right: 10px;
+}

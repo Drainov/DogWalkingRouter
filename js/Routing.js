@@ -18,6 +18,7 @@ var map = L.map('DogMap', {
     center:[52, 5], 
     zoom:10}
 );
+
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 // load osm map 
@@ -51,22 +52,18 @@ $( function() {
 	}
 });
 
-//Jquerry settings menu
-$( function() {
-    $( "#speed" ).selectmenu();
- 
-    $( "#files" ).selectmenu();
- 
-    $( "#number" )
-      .selectmenu()
-      .selectmenu( "menuWidget" )
-      .addClass( "overflow" );
-  } );
-//Jquerry routing button
-$( "#RoutingSP" ).controlgroup();
 
+// shortest path part (everything below is for shortest path)
+$(document).ready(function(){
+	$('input[id="Routing_test"]').click(function(){
+		if($(this).is(":not(:checked)")){
+			alert("Checkbox is unchecked.");
+		}
+		else if($(this).is(":checked")){
+			alert("Checkbox is checked.");
 // shortest path layer geojson
 var pathLayer = L.geoJSON(null);
+
 
 // draggable marker for starting point. Note the marker is initialized with an initial starting position
 var sourceMarker = L.marker([52.089149, 5.142144], {
@@ -93,8 +90,7 @@ var targetMarker = L.marker([52.092516, 5.116474], {
 // function to get nearest vertex to the passed point
 function getVertex(selectedPoint) {
 	var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${
-		selectedPoint.lng
-	};y:${selectedPoint.lat};`;
+		selectedPoint.lng};y:${selectedPoint.lat};`;
 	$.ajax({
 		url: url,
 		async: false,
@@ -128,7 +124,9 @@ function getRoute() {
 		map.addLayer(pathLayer);
 	});
 }
-
 getVertex(sourceMarker.getLatLng());
 getVertex(targetMarker.getLatLng());
 getRoute();
+}
+});
+});
