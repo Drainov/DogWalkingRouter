@@ -18,7 +18,6 @@ var map = L.map('DogMap', {
     center:[52, 5], 
     zoom:10}
 );
-
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 // load osm map 
@@ -29,25 +28,22 @@ var OpenStreetMap = L.tileLayer(
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
 ).addTo(map);
-L.Control.geocoder().addTo(map);
+L.Control.geocoder({defaultMarkGeocode: false}).on('markgeocode', function(e) {
+    var latlng = e.geocode.center;
+    map.fitBounds(e.geocode.bbox);
+  }).addTo(map);
         if (!navigator.geolocation) {
             console.log("Your browser doesn't support geolocation feature!")
         } else {{
                 navigator.geolocation.getCurrentPosition(getPosition)
             };
         };
-		var marker, lat, long;
+		var lat, long;
 		function getPosition(position) {
             // console.log(position)
             lat = position.coords.latitude
             long = position.coords.longitude
-            if (marker) {
-                map.removeLayer(marker)
-            }
-            marker = L.marker([lat, long])
-            L.featureGroup([marker]).addTo(map)
-			map.setView(([lat, long]),12);
-
+			map.setView(([lat, long]),15);
         }
 //Jquerry slide bar for distance
 $( function() {
@@ -71,6 +67,7 @@ $( function() {
       $( "#log" ).scrollTop( 0 );
 	}
 });
+//onclick place marker
 
 
 // shortest path part (everything below is for shortest path)
