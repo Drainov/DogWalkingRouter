@@ -32,10 +32,9 @@ var OpenStreetMap = L.tileLayer(
 L.Control.geocoder().addTo(map);
         if (!navigator.geolocation) {
             console.log("Your browser doesn't support geolocation feature!")
-        } else {
-            setInterval(() => {
+        } else {{
                 navigator.geolocation.getCurrentPosition(getPosition)
-            }, 5000);
+            };
         };
 		var marker, lat, long;
 		function getPosition(position) {
