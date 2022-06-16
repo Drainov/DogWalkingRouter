@@ -1,3 +1,5 @@
+--from https://gis.stackexchange.com/questions/241393/how-to-split-circles-in-12-sections-in-postgis
+
 WITH source AS ( 
 	SELECT id, the_geom AS geom from uu_2po_4pgr_vertices_pgr where id=173461
 )
@@ -29,4 +31,9 @@ ORDER BY a.id, path
 
 --SELECT id, path, ST_Centroid(geom) AS centroid_geom from pie;
 -- ,inters AS (SELECT pois.*, pie.path FROM pie, pois where ST_Intersects(pois.the_geom, pie.geom))
-SELECT distinct on (pie.path) pie.path, pois.* FROM pie, pois where ST_Within(pois.the_geom, pie.geom) 
+-- SELECT distinct on (pie.path) pie.path, pois.* FROM pie, pois where ST_Within(pois.the_geom, pie.geom) 
+
+
+, routepoints AS (SELECT distinct on (pie.path) pie.path, uu_2po_4pgr_vertices_pgr.* FROM pie, uu_2po_4pgr_vertices_pgr where ST_Within(uu_2po_4pgr_vertices_pgr.the_geom, pie.geom))
+
+SELECT * from routepoints order by random() limit 3;
