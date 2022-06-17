@@ -71,6 +71,9 @@ $( function() {
 map.on('click',function(e){
   lat = e.latlng.lat;
   lon = e.latlng.lng;
+  buffer = 52;
+  buffercircle = buffer * 0.62;
+  buffer3 = buffer * 1.13;
   var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lat};y:${e.latlng.lng};`;
 $.ajax({
 	url: url,
