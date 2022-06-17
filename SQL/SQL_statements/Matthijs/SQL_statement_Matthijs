@@ -27,6 +27,15 @@ ST_Collect(e.geom_way) AS geom
  FROM pgr_dijkstra('SELECT id,source,target, cost 
  FROM edges', (Select source FROM edges WHERE id = %source%),  (Select target FROM edges WHERE id = %target%), false) AS r,edges AS e WHERE r.edge=e.id GROUP BY e.id,e.osm_name,e.clazz
 
+#Select number of a pie
+
+DROP TABLE IF EXISTS RandomPie;
+Create table RandomPie (id INT PRIMARY KEY, path INT);
+Insert into RandomPie (id, path) VALUES (1, floor(random() * 12 + 1)); 
+Insert into RandomPie (id, path)(SELECT 2, CASE WHEN path = 1 then 12 ELSE path - 1 END FROM RandomPie WHERE id = 1);
+Insert into RandomPie (id, path)(SELECT 3, CASE WHEN path = 1 then 11 WHEN path = 2 then 12 ELSE path - 2 END FROM RandomPie WHERE id = 1);								 
+SELECT * FROM RandomPie;
+
 #test dijkstra
 SELECT
  min(r.seq) AS seq,
