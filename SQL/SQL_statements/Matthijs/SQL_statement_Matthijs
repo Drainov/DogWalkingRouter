@@ -1,10 +1,11 @@
 #Nearset edge on standard OSM2PO dataset
-SELECT id, geom_way, string_agg(distinct(osm_name),',') AS streetname
+SELECT id, the_geom, string_agg(distinct(osm_name),',') AS streetname
 FROM
   edges 
 WHERE
-  id = (SELECT id FROM edges ORDER BY geom_way <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
-GROUP BY id, geom_way
+  id = (SELECT id FROM edges WHERE the_geom && ST_MakeEnvelope(%bxsw%, %bysw%, %bxne%, %byne%, 4326) ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
+GROUP BY id, the_geom
+
 
 Nearest vertex
 SELECT id, the_geom 

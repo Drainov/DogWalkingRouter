@@ -79,6 +79,23 @@ $.ajax({
 	url: url,
 	async: true,
 	success: function(data) {
+		clickedarea = e.latlng;
+		rect = L.rectangle(clickedarea.toBounds(5000));
+		//alert(rext);
+		//Creation of a bounding box
+        bbox = clickedarea.toBounds(5000);
+		bxsw = rect.getBounds()._southWest.lng;
+		bysw = rect.getBounds()._southWest.lat;
+		bxne = rect.getBounds()._northEast.lng;
+		byne = rect.getBounds()._northEast.lat;
+		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lat};y:${e.latlng.lng};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+		$.ajax({
+			url: url,
+			async: true,
+			success: function(street) {
+		alert(response.features[0].properties.id);
+			}
+		});
 	}
 });
 	  if (BeginMarker != undefined) {
