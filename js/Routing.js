@@ -1,7 +1,7 @@
 //connect to server (fill in your own geoserver address)
 var geoserverUrl = "http://localhost:8080/geoserver";
 var selectedPoint = null;
-
+var BeginMarker = null;
 // from example add a empty variable
 var source = null;
 var target = null;
@@ -68,8 +68,23 @@ $( function() {
 	}
 });
 //onclick place marker
+map.on('click',function(e){
+  lat = e.latlng.lat;
+  lon = e.latlng.lng;
+  var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lat};y:${e.latlng.lng};`;
+$.ajax({
+	url: url,
+	async: true,
+	success: function(data) {
+	}
+});
+	  if (BeginMarker != undefined) {
+			map.removeLayer(BeginMarker);
+	  };
 
-
+//Add a marker to show where you clicked.
+  BeginMarker = L.marker([lat,lon]).addTo(map);  
+});
 // shortest path part (everything below is for shortest path)
 $(document).ready(function(){
 	$('input[id="Routing_test"]').click(function(){
