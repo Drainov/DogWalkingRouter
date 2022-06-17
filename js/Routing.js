@@ -121,7 +121,7 @@ $(document).ready(function(){
 
 			// function to get nearest vertex to the passed point
 			function getVertex(selectedPoint) {
-				var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${
+				var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${
 					selectedPoint.lng};y:${selectedPoint.lat};`;
 				$.ajax({
 					url: url,

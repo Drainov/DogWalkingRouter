@@ -1,4 +1,4 @@
-#Nearset vertex on standard OSM2PO dataset
+#Nearset edge on standard OSM2PO dataset
 SELECT
   v.id,
   v.geom_way,
@@ -8,11 +8,21 @@ FROM
 WHERE
   v.id = (SELECT 
         id
-        fROM edges 
+        FROM edges 
         ORDER BY geom_way <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
 
 
 GROUP BY v.id, v.geom_way
+
+Nearest vertex
+SELECT id, the_geom 
+FROM
+  vertices_pgr 
+WHERE
+  id = (SELECT id FROM vertices_pgr ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
+
+GROUP BY id, the_geom
+
 
 #shortest dijkstra OSM2PO dataset
 SELECT
