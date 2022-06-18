@@ -81,7 +81,6 @@ $.ajax({
 	success: function(data) {
 		clickedarea = e.latlng;
 		idvertex = data.features[0].properties.id;
-		alert(idvertex)
 		rect = L.rectangle(clickedarea.toBounds(5000));
 		//alert(rext);
 		//Creation of a bounding box
