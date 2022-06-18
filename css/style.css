@@ -86,3 +86,16 @@ label {
   transform: scale(1.8);
   margin-right: 10px;
 }
+
+#streetname{
+  display: inline-block;
+  margin-right: 10px;
+  border: 0px solid #555;
+  background-color: #f1f1f100;
+  height: auto;
+  font-size: 150%;
+  width: 300px;
+  text-align: left;
+  color: #f6931f;
+  font-weight:bold;
+}

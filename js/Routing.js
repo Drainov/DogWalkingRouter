@@ -61,12 +61,12 @@ $( function() {
   } );
 
 //Jquerry input bar (needs a response from the server)
-$( function() {
-    function log( message ) {
-      $( "<div>" ).text( message ).prependTo( "#log" );
-      $( "#log" ).scrollTop( 0 );
-	}
-});
+//$( function() {
+//    function log( message ) {
+//      $( "<div>" ).text( message ).prependTo( "#log" );
+//      $( "#log" ).scrollTop( 0 );
+//	}
+//});
 //onclick place marker
 map.on('click',function(e){
   lat = e.latlng.lat;
@@ -94,8 +94,8 @@ $.ajax({
 			url: url,
 			async: true,
 			success: function street (data){
-			streetname = data.features[0].properties.streetname;
-			alert(streetname)
+			streetnameJ = data.features[0].properties.streetname;
+			document.getElementById("streetname").setAttribute( 'value' ,streetnameJ);
 			}
 		});
 	}
