@@ -1,5 +1,5 @@
-DROP FUNCTION dogwalking_Pie(integer);
-create or replace function dogwalking_Pie (input int) 
+DROP FUNCTION dogwalking_Pie(integer, float);
+create or replace function dogwalking_Pie (input int, distance float) 
 returns table (
 	id int,
 	path int,
@@ -12,17 +12,17 @@ declare
 begin
     RETURN QUERY 
 	WITH source AS ( 
-		SELECT edgesbkp.id, geom_way AS geom from edgesbkp where edgesbkp.id=input
+		SELECT edgesbkp.id, the_geom AS geom from edgesbkp where edgesbkp.id=input
 	)
 	,circle AS ( --first make a nice circle with a lot of segments
-		SELECT source.id, ST_Buffer(geom, 0.0015,25) as geom FROM source
+		SELECT source.id, ST_Buffer(geom, distance,25) as geom FROM source
 	)
 	,segments AS ( --create segments from a smaller circle so we can find out later wich triangle belongs to which segment
 		 SELECT dumps.id, (pt).path path, ST_MakeLine(lag((pt).geom, 1, NULL) OVER (PARTITION BY dumps.id ORDER BY dumps.id, (pt).path), (pt).geom) AS geom
-		  FROM (SELECT source.id, ST_DumpPoints(ST_Buffer(geom,0.001,3)) AS pt FROM source) as dumps
+		  FROM (SELECT source.id, ST_DumpPoints(ST_Buffer(geom,distance*0.67,3)) AS pt FROM source) as dumps
 	)
 	,dump AS ( --make the pie segments, but make them bigger than the nice circle
-		SELECT source.id, (ST_DumpPoints(ST_Buffer(geom,0.0017,3))).geom as geom
+		SELECT source.id, (ST_DumpPoints(ST_Buffer(geom,distance*1.13,3))).geom as geom
 		FROM source --insert your point table here
 		UNION ALL 
 		SELECT source.id, geom FROM source --same here
@@ -66,4 +66,11 @@ end; $$
 
 
 select * from dogwalking_RandomRoutepoints(25639);
+
+
+select * from dogwalking_Pie(%idvertex%, 0.00015)
+WHERE
+  id = (SELECT id FROM edgesbkp WHERE the_geom && ST_MakeEnvelope(%bxsw%, %bysw%, %bxne%, %byne%, 4326) ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
+
+
 
