@@ -1,7 +1,7 @@
-DROP FUNCTION dogwalking_Pie(integer, float);
+DROP FUNCTION dogwalking_pie(integer,double precision)
 create or replace function dogwalking_Pie (input int, distance float) 
 returns table (
-	id int,
+	id bigint,
 	path int,
 	the_geom geometry
 ) 
@@ -12,7 +12,7 @@ declare
 begin
     RETURN QUERY 
 	WITH source AS ( 
-		SELECT edgesbkp.id, the_geom AS geom from edgesbkp where edgesbkp.id=input
+		SELECT edgesbkp_vertices_pgr.id, edgesbkp_vertices_pgr.the_geom AS geom from edgesbkp_vertices_pgr where edgesbkp_vertices_pgr.id=input
 	)
 	,circle AS ( --first make a nice circle with a lot of segments
 		SELECT source.id, ST_Buffer(geom, distance,25) as geom FROM source
