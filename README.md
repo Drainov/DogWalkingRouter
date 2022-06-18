@@ -8,3 +8,11 @@
 - nearest_edge query for GeoServer
 - nearest_vertex query for GeoServer
 - shortest_path query for GeoServer (TODO: needs buffer)
+
+## Type validation
+
+When using SQL views in GeoServer, make sure to validate the parameters correctly so that it accepts a floating point number. 
+
+For example, you can use this regular expression:
+
+`^[+-]?([0-9]+\.?[0-9]*|\.[0-9]+)$`
