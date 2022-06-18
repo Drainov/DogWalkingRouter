@@ -97,7 +97,9 @@ $.ajax({
 			async: true,
 			success: function pie (data){
         console.log(data)
-        map.removeLayer(pathLayer);
+        if (pathLayer !== null)
+          map.removeLayer(pathLayer);
+
         pathLayer = L.geoJSON(data);
         map.addLayer(pathLayer);
 			}
