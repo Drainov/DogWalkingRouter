@@ -41,8 +41,8 @@ begin
 end; $$
 
 
-drop function dogwalking_RandomRoutepoints (int);
-create or replace function dogwalking_RandomRoutepoints (input int) 
+drop function dogwalking_RandomRoutepoints (int, distance float);
+create or replace function dogwalking_RandomRoutepoints (input int, distance float) 
 returns table (
 	path int,
 	id bigint,
@@ -54,11 +54,9 @@ returns table (
 ) 
 language plpgsql
 as $$
-declare 
-    someconstant record;
 begin
     RETURN QUERY 
-	with pie as (select * from dogwalking_Pie(input))
+	with pie as (select * from dogwalking_Pie(input, distance))
 	,routepoints AS (SELECT distinct on (pie.path) pie.path, edgesbkp_vertices_pgr.* FROM pie, edgesbkp_vertices_pgr where ST_Within(edgesbkp_vertices_pgr.the_geom, pie.the_geom))
 	SELECT * 
 	FROM routepoints order by random() limit 3;
