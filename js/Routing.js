@@ -74,26 +74,29 @@ map.on('click',function(e){
   buffer = 52;
   buffercircle = buffer * 0.62;
   buffer3 = buffer * 1.13;
-  var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lat};y:${e.latlng.lng};`;
+  var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
 $.ajax({
 	url: url,
 	async: true,
 	success: function(data) {
 		clickedarea = e.latlng;
+		idvertex = data.features[0].properties.id;
+		alert(idvertex)
 		rect = L.rectangle(clickedarea.toBounds(5000));
 		//alert(rext);
 		//Creation of a bounding box
-        bbox = clickedarea.toBounds(5000);
+        //bbox = clickedarea.toBounds(5000);
 		bxsw = rect.getBounds()._southWest.lng;
 		bysw = rect.getBounds()._southWest.lat;
 		bxne = rect.getBounds()._northEast.lng;
 		byne = rect.getBounds()._northEast.lat;
-		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lat};y:${e.latlng.lng};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
 		$.ajax({
 			url: url,
 			async: true,
-			success: function(street) {
-		alert(response.features[0].properties.id);
+			success: function street (data){
+			streetname = data.features[0].properties.streetname;
+			alert(streetname)
 			}
 		});
 	}
