@@ -7,8 +7,6 @@ returns table (
 ) 
 language plpgsql
 as $$
-declare 
-    someconstant record;
 begin
     RETURN QUERY 
 	WITH source AS ( 
@@ -62,7 +60,6 @@ begin
 	FROM routepoints order by random() limit 3;
 end; $$
 
-
 drop function dogwalking_CircuitRoute (input int, distance float);
 create or replace function dogwalking_CircuitRoute (input int, distance float) 
 returns table (
@@ -81,13 +78,15 @@ returns table (
 language plpgsql
 as $$
 begin
-    RETURN QUERY 
-	with tmp as (select path as id, routepoints.the_geom from (select * from dogwalking_RandomRoutepoints(input, distance)) as routepoints),
-	tsp as (
+    DROP TABLE IF EXISTS tmp;
+	CREATE TEMP TABLE tmp as  
+    select * from dogwalking_RandomRoutepoints(input, distance) order by random() limit 3;
+	RETURN QUERY 
+	with tsp as (
 	select * from pgr_TSP( $dijkstra$
 	select * from pgr_dijkstraCostMatrix(
-		'select id, source, target, cost, reverse_cost from edgesbkp',
-		(select array_agg(id) from tmp),
+		'select edgesbkp.id, edgesbkp.source, edgesbkp.target, edgesbkp.cost, edgesbkp.reverse_cost from edgesbkp',
+		(select array_agg(tmp.id) from tmp),
 			directed:=false
 	)
 	$dijkstra$) order by seq
@@ -96,10 +95,11 @@ begin
 	from edgesbkp u
 	join
 	(select * from pgr_dijkstraVia (
-		'select id, source, target, cost, reverse_cost from edgesbkp', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
+		'select edgesbkp.id, edgesbkp.source, edgesbkp.target, edgesbkp.cost, edgesbkp.reverse_cost from edgesbkp', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
 		where via.edge>0) d
 	on u.id=d.edge;
 end; $$
+
 
 
 
