@@ -18,20 +18,10 @@ var map = L.map('DogMap', {
     center:[52, 5], 
     zoom:10}
 );
-//intialize dog places
-var dogmap = L.geoJSON(null);
-var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:dogplaces&outputformat=application/json`;
-		$.ajax({
-			url: url,
-			async: true,
-			success: function dog (data){
-				map.removeLayer(dogmap);
-				dogmap = L.geoJSON(data);
-				map.addLayer(dogmap);
-			}
-		});
+
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
+
 // load osm map 
 var OpenStreetMap = L.tileLayer(
     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
@@ -40,6 +30,17 @@ var OpenStreetMap = L.tileLayer(
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
 ).addTo(map);
+
+//intialize dog places wms map
+var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
+    layers: 'cite:dogplaces',
+	format: 'image/png',
+	transparent: true,
+	version: '1.1.0',
+	style: 'dog2,'
+}).addTo(map);
+
+//geocoder
 L.Control.geocoder({defaultMarkGeocode: false}).on('markgeocode', function(e) {
     var latlng = e.geocode.center;
     map.fitBounds(e.geocode.bbox);
@@ -94,6 +95,7 @@ $.ajax({
 		clickedarea = e.latlng;
 		idvertex = data.features[0].properties.id;
 		rect = L.rectangle(clickedarea.toBounds(5000));
+		//map.addLayer(rect);
 		//alert(rext);
 		//Creation of a bounding box
         //bbox = clickedarea.toBounds(5000);
