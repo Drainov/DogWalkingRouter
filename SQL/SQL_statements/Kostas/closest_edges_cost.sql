@@ -7,4 +7,4 @@ from edges e
 inner join open_spaces o
 on ST_DWithin(e.the_geom, o.the_geom, 0.0003)
 )
-update edges set cost = cost/100 from closest_edges where closest_edges.id=dupe_edges.id
+update edges set cost = cost/100 from closest_edges where closest_edges.id=edges.id
