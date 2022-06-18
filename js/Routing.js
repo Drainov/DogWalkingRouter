@@ -15,6 +15,17 @@ var point_5 = null;
 
 var pathLayer = null;
 
+// Styling example for the points we select
+var selectedPointStyle = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
+
 //initialize map & sidebar + location
 var map = L.map('DogMap', {
     center:[52, 5],
@@ -91,7 +102,8 @@ $.ajax({
 		bysw = rect.getBounds()._southWest.lat;
 		bxne = rect.getBounds()._northEast.lng;
 		byne = rect.getBounds()._northEast.lat;
-    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_pie&outputformat=application/json&viewparams=idvertex:${idvertex};x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+    // var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_pie&outputformat=application/json&viewparams=idvertex:${idvertex};x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_random_route_points&outputformat=application/json&viewparams=idvertex:${idvertex};`;
 		$.ajax({
 			url: url,
 			async: true,
@@ -100,7 +112,10 @@ $.ajax({
         if (pathLayer !== null)
           map.removeLayer(pathLayer);
 
-        pathLayer = L.geoJSON(data);
+        pathLayer = L.geoJSON(data,
+          { pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, selectedPointStyle);
+        }});
         map.addLayer(pathLayer);
 			}
 		});
