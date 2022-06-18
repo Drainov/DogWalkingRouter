@@ -18,6 +18,18 @@ var map = L.map('DogMap', {
     center:[52, 5], 
     zoom:10}
 );
+//intialize dog places
+var dogmap = L.geoJSON(null);
+var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:dogplaces&outputformat=application/json`;
+		$.ajax({
+			url: url,
+			async: true,
+			success: function dog (data){
+				map.removeLayer(dogmap);
+				dogmap = L.geoJSON(data);
+				map.addLayer(dogmap);
+			}
+		});
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 // load osm map 
@@ -74,7 +86,7 @@ map.on('click',function(e){
   buffer = 52;
   buffercircle = buffer * 0.62;
   buffer3 = buffer * 1.13;
-  var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
+  var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
 $.ajax({
 	url: url,
 	async: true,
@@ -89,7 +101,7 @@ $.ajax({
 		bysw = rect.getBounds()._southWest.lat;
 		bxne = rect.getBounds()._northEast.lng;
 		byne = rect.getBounds()._northEast.lat;
-		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+		var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
 		$.ajax({
 			url: url,
 			async: true,
@@ -149,9 +161,7 @@ $(document).ready(function(){
 					url: url,
 					async: false,
 					success: function(data) {
-						loadVertex(
-							data,
-							selectedPoint.toString() === sourceMarker.getLatLng().toString()
+						loadVertex( data, selectedPoint.toString() === sourceMarker.getLatLng().toString()
 						);
 					}
 				});
