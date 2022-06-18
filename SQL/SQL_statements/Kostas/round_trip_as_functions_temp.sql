@@ -63,12 +63,43 @@ begin
 end; $$
 
 
-select * from dogwalking_RandomRoutepoints(25639);
-
-
-select * from dogwalking_Pie(%idvertex%, 0.00015)
-WHERE
-  id = (SELECT id FROM edgesbkp WHERE the_geom && ST_MakeEnvelope(%bxsw%, %bysw%, %bxne%, %byne%, 4326) ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
+drop function dogwalking_CircuitRoute (input int, distance float);
+create or replace function dogwalking_CircuitRoute (input int, distance float) 
+returns table (
+	seq int,
+	path_id int,
+	path_seq int,
+	start_vid bigint,
+	end_vid bigint, 
+	node bigint, 
+	edge bigint, 
+	cost double precision, 
+	agg_cost double precision, 
+	route_agg_cost double precision, 
+	the_geom geometry
+) 
+language plpgsql
+as $$
+begin
+    RETURN QUERY 
+	with tmp as (select path as id, routepoints.the_geom from (select * from dogwalking_RandomRoutepoints(input, distance)) as routepoints),
+	tsp as (
+	select * from pgr_TSP( $dijkstra$
+	select * from pgr_dijkstraCostMatrix(
+		'select id, source, target, cost, reverse_cost from edgesbkp',
+		(select array_agg(id) from tmp),
+			directed:=false
+	)
+	$dijkstra$) order by seq
+	)
+	select d.*, u.the_geom
+	from edgesbkp u
+	join
+	(select * from pgr_dijkstraVia (
+		'select id, source, target, cost, reverse_cost from edgesbkp', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
+		where via.edge>0) d
+	on u.id=d.edge;
+end; $$
 
 
 
