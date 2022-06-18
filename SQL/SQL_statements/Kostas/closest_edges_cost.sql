@@ -4,7 +4,7 @@
 
 with closest_edges as (select e.id, e.the_geom, o.ogc_fid
 from edges e
-inner join open_spaces_utrecht_splitted o
-on ST_DWithin(e.the_geom, o.wkb_geometry, 0.0003)
+inner join open_spaces o
+on ST_DWithin(e.the_geom, o.the_geom, 0.0003)
 )
 update edges set cost = cost/100 from closest_edges where closest_edges.id=dupe_edges.id
