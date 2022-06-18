@@ -120,6 +120,24 @@ $.ajax({
 			}
 		});
 
+    var url2 = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};`;
+    $.ajax({
+      url: url2,
+      async: true,
+      success: function pie (data){
+        console.log(data)
+        if (pathLayer !== null)
+          map.removeLayer(pathLayer);
+
+        pathLayer = L.geoJSON(data,
+          { pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, selectedPointStyle);
+        }});
+        map.addLayer(pathLayer);
+      }
+    });
+
+
 		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
 		$.ajax({
 			url: url,
