@@ -35,6 +35,7 @@ var map = L.map('DogMap', {
     zoom:10}
 );
 
+
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 
@@ -54,6 +55,13 @@ var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
 	transparent: true,
 	version: '1.1.0',
 	style: 'dog2,'
+}).addTo(map);
+
+// Scalebar
+L.control.scale({
+	metric: true,
+	imperial: false,
+	position: 'bottomright'
 }).addTo(map);
 
 //geocoder
