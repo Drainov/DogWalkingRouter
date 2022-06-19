@@ -13,20 +13,33 @@ var point_3 = null;
 var point_4 = null;
 var point_5 = null;
 
+var pathLayer = null;
+
+// Styling example for the points we select
+var selectedPointStyle = {
+    radius: 8,
+    fillColor: "#ff7800",
+    color: "#000",
+    weight: 1,
+    opacity: 1,
+    fillOpacity: 0.8
+};
+
+
 //initialize map & sidebar + location
-var map = L.map('DogMap', { 
-    center:[52, 5], 
+var map = L.map('DogMap', {
+    center:[52, 5],
     zoom:10}
 );
 
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
 
-// load osm map 
+// load osm map
 var OpenStreetMap = L.tileLayer(
-    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', 
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
     {
-        maxZoom: 19, 
+        maxZoom: 19,
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
 ).addTo(map);
@@ -103,7 +116,43 @@ $.ajax({
 		bysw = rect.getBounds()._southWest.lat;
 		bxne = rect.getBounds()._northEast.lng;
 		byne = rect.getBounds()._northEast.lat;
-		var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+    // var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_pie&outputformat=application/json&viewparams=idvertex:${idvertex};x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_random_route_points&outputformat=application/json&viewparams=idvertex:${idvertex};`;
+		$.ajax({
+			url: url,
+			async: true,
+			success: function pie (data){
+        console.log(data)
+        if (pathLayer !== null)
+          map.removeLayer(pathLayer);
+
+        pathLayer = L.geoJSON(data,
+          { pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, selectedPointStyle);
+        }});
+        map.addLayer(pathLayer);
+			}
+		});
+
+    var url2 = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};`;
+    $.ajax({
+      url: url2,
+      async: true,
+      success: function pie (data){
+        console.log(data)
+        if (pathLayer !== null)
+          map.removeLayer(pathLayer);
+
+        pathLayer = L.geoJSON(data,
+          { pointToLayer: function (feature, latlng) {
+            return L.circleMarker(latlng, selectedPointStyle);
+        }});
+        map.addLayer(pathLayer);
+      }
+    });
+
+
+		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
 		$.ajax({
 			url: url,
 			async: true,
@@ -119,7 +168,7 @@ $.ajax({
 	  };
 
 //Add a marker to show where you clicked.
-  BeginMarker = L.marker([lat,lon]).addTo(map);  
+  BeginMarker = L.marker([lat,lon]).addTo(map);
 });
 // shortest path part (everything below is for shortest path)
 $(document).ready(function(){
