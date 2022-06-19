@@ -11,23 +11,14 @@
 	<!-- Sidebar -->
 	<script src="js/leaflet-sidebar.js"></script>
 	<!-- Geocoder -->
-	<link rel="stylesheet" href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css" />
-	<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+	<script src="js/Control.Geocoder.js"></script>
+	<link rel="stylesheet" href="css/Control.Geocoder.css" />
 	<!--JQuery -->	
 	<script src="js/jquery-3.6.0.min.js"></script>	
 	<script src="js/jquery-ui.min.js"></script>	
 	<link href="css/jquery-ui.min.css" rel="stylesheet">
 	<link href="css/jquery-ui.theme.min.css" rel="stylesheet">
 	<link href="css/jquery-ui.structure.min.css" rel="stylesheet">
-
-	<!-- Font -->
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat&display=swap" rel="stylesheet">
-
-	<link rel="preconnect" href="https://fonts.googleapis.com">
-	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500&display=swap" rel="stylesheet">
 
 	<!--A stylesheet for this client-->	
 	<link rel="stylesheet" href="css/style.css">
@@ -72,6 +63,19 @@
 							<label for="amount" align=left > Travel distance in Kilometers</label>
 							<input type="text" id="amount" readonly style="border:0; color:#f6931f; font-weight:bold; width: 300px; height:auto; font-size: 150%;">
 						</p>
+						<h2 align="left"> Legend </h2>
+						<div id="bar">
+							<table class="BarTable" style="width:75%;height: 100%">
+							  <tr>
+								<td><img class="resize" src="css/images/red_legend.png"></td>
+								<td style="text-align:left"><h3 >Dog Playground </h3></td>
+							  </tr>
+							  <tr>
+								<td><img class="resize" src="css/images/Orange_legend.png"></td>
+								<td style="text-align:left"><h3 >Dog Pooping Area </h3></td>
+							  </tr>
+							</table>
+						  </div>
 					</div>
 					<div class="leaflet-sidebar-pane" id="settings">
 						<h1 class="leaflet-sidebar-header">

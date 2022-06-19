@@ -31,8 +31,10 @@ var map = L.map('DogMap', {
     center:[52, 5],
     zoom:10}
 );
+
 // add sidebar
 var sidebar = L.control.sidebar('sidebar').addTo(map);
+
 // load osm map
 var OpenStreetMap = L.tileLayer(
     'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
@@ -41,6 +43,17 @@ var OpenStreetMap = L.tileLayer(
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
 ).addTo(map);
+
+//intialize dog places wms map
+var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
+    layers: 'cite:dogplaces',
+	format: 'image/png',
+	transparent: true,
+	version: '1.1.0',
+	style: 'dog2,'
+}).addTo(map);
+
+//geocoder
 L.Control.geocoder({defaultMarkGeocode: false}).on('markgeocode', function(e) {
     var latlng = e.geocode.center;
     map.fitBounds(e.geocode.bbox);
@@ -87,7 +100,7 @@ map.on('click',function(e){
   buffer = 52;
   buffercircle = buffer * 0.62;
   buffer3 = buffer * 1.13;
-  var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
+  var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
 $.ajax({
 	url: url,
 	async: true,
@@ -95,6 +108,7 @@ $.ajax({
 		clickedarea = e.latlng;
 		idvertex = data.features[0].properties.id;
 		rect = L.rectangle(clickedarea.toBounds(5000));
+		//map.addLayer(rect);
 		//alert(rext);
 		//Creation of a bounding box
         //bbox = clickedarea.toBounds(5000);
@@ -198,9 +212,7 @@ $(document).ready(function(){
 					url: url,
 					async: false,
 					success: function(data) {
-						loadVertex(
-							data,
-							selectedPoint.toString() === sourceMarker.getLatLng().toString()
+						loadVertex( data, selectedPoint.toString() === sourceMarker.getLatLng().toString()
 						);
 					}
 				});

@@ -10,7 +10,7 @@ as $$
 begin
     RETURN QUERY 
 	WITH source AS ( 
-		SELECT edgesbkp_vertices_pgr.id, edgesbkp_vertices_pgr.the_geom AS geom from edgesbkp_vertices_pgr where edgesbkp_vertices_pgr.id=input
+		SELECT vertices_pgr.id, vertices_pgr.the_geom AS geom from vertices_pgr where vertices_pgr.id=input
 	)
 	,circle AS ( --first make a nice circle with a lot of segments
 		SELECT source.id, ST_Buffer(geom, distance,25) as geom FROM source
@@ -55,7 +55,7 @@ as $$
 begin
     RETURN QUERY 
 	with pie as (select * from dogwalking_Pie(input, distance))
-	,routepoints AS (SELECT distinct on (pie.path) pie.path, edgesbkp_vertices_pgr.* FROM pie, edgesbkp_vertices_pgr where ST_Within(edgesbkp_vertices_pgr.the_geom, pie.the_geom))
+	,routepoints AS (SELECT distinct on (pie.path) pie.path, vertices_pgr.* FROM pie, vertices_pgr where ST_Within(vertices_pgr.the_geom, pie.the_geom))
 	SELECT * 
 	FROM routepoints order by random() limit 3;
 end; $$
@@ -85,17 +85,17 @@ begin
 	with tsp as (
 	select * from pgr_TSP( $dijkstra$
 	select * from pgr_dijkstraCostMatrix(
-		'select edgesbkp.id, edgesbkp.source, edgesbkp.target, edgesbkp.cost, edgesbkp.reverse_cost from edgesbkp',
+		'select edges.id, edges.source, edges.target, edges.cost, edges.reverse_cost from edges',
 		(select array_agg(tmp.id) from tmp),
 			directed:=false
 	)
 	$dijkstra$) order by seq
 	)
 	select d.*, u.the_geom
-	from edgesbkp u
+	from edges u
 	join
 	(select * from pgr_dijkstraVia (
-		'select edgesbkp.id, edgesbkp.source, edgesbkp.target, edgesbkp.cost, edgesbkp.reverse_cost from edgesbkp', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
+		'select edges.id, edges.source, edges.target, edges.cost, edges.reverse_cost from edges', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
 		where via.edge>0) d
 	on u.id=d.edge;
 end; $$
