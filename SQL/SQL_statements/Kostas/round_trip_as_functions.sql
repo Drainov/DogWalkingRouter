@@ -1,4 +1,4 @@
-DROP FUNCTION dogwalking_pie(integer,double precision)
+DROP FUNCTION IF EXISTS dogwalking_pie(integer,double precision);
 create or replace function dogwalking_Pie (input int, distance float) 
 returns table (
 	id bigint,
@@ -37,9 +37,9 @@ begin
 	WHERE a.id = b.id
 	ORDER BY a.id, path;
 end; $$
+;
 
-
-drop function dogwalking_RandomRoutepoints (int, distance float);
+drop function if exists dogwalking_RandomRoutepoints (int, distance float);
 create or replace function dogwalking_RandomRoutepoints (input int, distance float) 
 returns table (
 	path int,
@@ -59,8 +59,9 @@ begin
 	SELECT * 
 	FROM routepoints order by random() limit 3;
 end; $$
+;
 
-drop function dogwalking_CircuitRoute (input int, distance float);
+drop function if exists dogwalking_CircuitRoute (input int, distance float);
 create or replace function dogwalking_CircuitRoute (input int, distance float) 
 returns table (
 	seq int,
@@ -99,7 +100,7 @@ begin
 		where via.edge>0) d
 	on u.id=d.edge;
 end; $$
-
+;
 
 
 
