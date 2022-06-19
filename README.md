@@ -33,11 +33,11 @@ GROUP BY id, the_geom
 
 #### cite:dogwalking_random_route_points
 
-`select * from dogwalking_RandomRoutepoints(%idvertex%, 0.0015)`
+`SELECT * FROM dogwalking_RandomRoutepoints(%idvertex%, 0.0015)`
 
 #### cite:dogwalking_circuit_route
 
-`select * from dogwalking_CircuitRoute(%idvertex%, 0.0015)`
+`SELECT * FROM dogwalking_CircuitRoute(%idvertex%, 0.0015)`
 
 ##### cite:shortest_path query
 Deprecated
