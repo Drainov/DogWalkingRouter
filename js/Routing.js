@@ -15,6 +15,9 @@ var point_5 = null;
 
 var pathLayer = null;
 
+// Init value to same default as slider
+var walking_distance = 0.5;
+
 // Styling example for the points we select
 var selectedPointStyle = {
     radius: 8,
@@ -81,6 +84,7 @@ $( function() {
 	  step: 0.5,
       slide: function( event, ui ) {
         $( "#amount" ).val( ui.value );
+        walking_distance = ui.value;
       }
     });
     $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
@@ -117,7 +121,7 @@ $.ajax({
 		bxne = rect.getBounds()._northEast.lng;
 		byne = rect.getBounds()._northEast.lat;
     // var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_pie&outputformat=application/json&viewparams=idvertex:${idvertex};x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
-    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_random_route_points&outputformat=application/json&viewparams=idvertex:${idvertex};`;
+    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_random_route_points&outputformat=application/json&viewparams=idvertex:${idvertex};distance:${walking_distance*0.001}`;
 		$.ajax({
 			url: url,
 			async: true,
@@ -134,7 +138,7 @@ $.ajax({
 			}
 		});
 
-    var url2 = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};`;
+    var url2 = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};distance:${walking_distance*0.001}`;
     $.ajax({
       url: url2,
       async: true,
