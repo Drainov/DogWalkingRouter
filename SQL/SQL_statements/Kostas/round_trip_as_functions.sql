@@ -39,6 +39,28 @@ begin
 end; $$
 ;
 
+drop function if exists dogwalking_BufferInM (lat float, lon float, distance float);
+create or replace function dogwalking_BufferInM (lat float, lon float, distance float);
+returns table (
+	path int,
+	id bigint,
+	cnt int,
+	chk int,
+	ein int,
+	eout int,
+	the_geom geometry
+)
+language plpgsql
+as $$
+begin
+   SELECT * FROM vertices_pgr WHERE  ST_DWithin('POINT(-4.6314 54.0887)'::geography,
+              ST_MakePoint(long,lat),8046.72); -- 8046.72 metres = 5 miles;
+			  
+	
+end; $$
+;
+
+
 drop function if exists dogwalking_RandomRoutepoints (int, distance float);
 create or replace function dogwalking_RandomRoutepoints (input int, distance float)
 returns table (
@@ -85,6 +107,8 @@ begin
 	CREATE TEMP TABLE tmp as
     select * from dogwalking_RandomRoutepoints(input, distance) order by random() limit 3;
 	RETURN QUERY
+	with WHERE
+  id = (SELECT id FROM edges WHERE the_geom && ST_MakeEnvelope(%bxsw%, %bysw%, %bxne%, %byne%, 4326) ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
 	with tsp as (
 	select * from pgr_TSP( $dijkstra$
 	select * from pgr_dijkstraCostMatrix(
@@ -99,6 +123,50 @@ begin
 	join
 	(select * from pgr_dijkstraVia (
 		'select edges.id, edges.source, edges.target, edges.final_costs as cost, edges.final_costs as reverse_cost from edges', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
+		where via.edge>0) d
+	on u.id=d.edge;
+end; $$
+;
+
+drop function if exists dogwalking_CircuitRoute_buffer (input int, distance float, lat float, lon float);
+create or replace function dogwalking_CircuitRoute_buffer (input int, distance float, lat float, lon float)
+returns table (
+	seq int,
+	path_id int,
+	path_seq int,
+	start_vid bigint,
+	end_vid bigint,
+	node bigint,
+	edge bigint,
+	cost double precision,
+	agg_cost double precision,
+	route_agg_cost double precision,
+	the_geom geometry
+)
+language plpgsql
+as $$
+begin
+    DROP TABLE IF EXISTS tmp;
+	CREATE TEMP TABLE tmp as
+    select * from dogwalking_RandomRoutepoints(input, distance) order by random() limit 3;
+	DROP TABLE IF EXISTS vicinity;
+	CREATE TEMP TABLE vicinity as
+	SELECT * FROM edges WHERE ST_DWithin(edges.the_geom,ST_MakePoint(lon,lat)::geography,1000);
+	RETURN QUERY
+	WITH tsp as (
+	select * from pgr_TSP( $dijkstra$
+	select * from pgr_dijkstraCostMatrix(
+		'select vicinity.id, vicinity.source, vicinity.target, vicinity.final_costs as cost, vicinity.final_costs as reverse_cost from vicinity',
+		(select array_agg(tmp.id) from tmp),
+			directed:=false
+	)
+	$dijkstra$) order by seq
+	)
+	select d.*, u.the_geom
+	from vicinity u
+	join
+	(select * from pgr_dijkstraVia (
+		'select vicinity.id, vicinity.source, vicinity.target, vicinity.final_costs as cost, vicinity.final_costs as reverse_cost from vicinity', (select array_agg(tsp.node) from tsp), directed:=false, U_turn_on_edge:=false) as via
 		where via.edge>0) d
 	on u.id=d.edge;
 end; $$
