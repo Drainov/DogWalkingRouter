@@ -6,13 +6,6 @@ var BeginMarker = null;
 var source = null;
 var target = null;
 
-// travel points
-var point_1 = null;
-var point_2 = null;
-var point_3 = null;
-var point_4 = null;
-var point_5 = null;
-
 var pathLayer = null;
 
 // Init value to same default as slider
@@ -31,9 +24,9 @@ var selectedPointStyle = {
 
 //initialize map & sidebar + location
 var map = L.map('DogMap', {
-    center:[52, 5],
-    zoom:10}
-);
+    center: [52, 5],
+    zoom: 10
+});
 
 
 // add sidebar
@@ -41,8 +34,7 @@ var sidebar = L.control.sidebar('sidebar').addTo(map);
 
 // load osm map
 var OpenStreetMap = L.tileLayer(
-    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',
-    {
+    'http://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
         maxZoom: 19,
         attribution: '&copy; <a href="http:openstreetmap.org/copyright">OpenStreetMap</a>'
     }
@@ -50,210 +42,116 @@ var OpenStreetMap = L.tileLayer(
 
 //intialize dog places wms map
 var wmsLayer = L.tileLayer.wms('http://localhost:8080/geoserver/wms', {
-    layers: 'cite:dogplaces',
-	format: 'image/png',
-	transparent: true,
-	version: '1.1.0',
-	style: 'dog2,'
+    layers: 'dog:dogplaces',
+    format: 'image/png',
+    transparent: true,
+    version: '1.1.0',
+    style: 'dog2,'
 }).addTo(map);
 
 // Scalebar
 L.control.scale({
-	metric: true,
-	imperial: false,
-	position: 'bottomright'
+    metric: true,
+    imperial: false,
+    position: 'bottomright'
 }).addTo(map);
 
 //geocoder
-L.Control.geocoder({defaultMarkGeocode: false}).on('markgeocode', function(e) {
+L.Control.geocoder({
+    defaultMarkGeocode: false
+}).on('markgeocode', function(e) {
     var latlng = e.geocode.center;
     map.fitBounds(e.geocode.bbox);
-  }).addTo(map);
-        if (!navigator.geolocation) {
-            console.log("Your browser doesn't support geolocation feature!")
-        } else {{
-                navigator.geolocation.getCurrentPosition(getPosition)
-            };
-        };
-		var lat, long;
-		function getPosition(position) {
-            // console.log(position)
-            lat = position.coords.latitude
-            long = position.coords.longitude
-			map.setView(([lat, long]),15);
-        }
-//Jquerry slide bar for distance
-$( function() {
-    $( "#slider-range-max" ).slider({
-      range: "max",
-      min: 0.5,
-      max: 10,
-      value: 0.5,
-	  step: 0.5,
-      slide: function( event, ui ) {
-        $( "#amount" ).val( ui.value );
-        walking_distance = ui.value;
-      }
-    });
-    $( "#amount" ).val( $( "#slider-range-max" ).slider( "value" ) );
-  } );
+}).addTo(map);
+if (!navigator.geolocation) {
+    console.log("Your browser doesn't support geolocation feature!")
+} else {
+    {
+        navigator.geolocation.getCurrentPosition(getPosition)
+    };
+};
+var lat, long;
 
-//Jquerry input bar (needs a response from the server)
-//$( function() {
-//    function log( message ) {
-//      $( "<div>" ).text( message ).prependTo( "#log" );
-//      $( "#log" ).scrollTop( 0 );
-//	}
-//});
-//onclick place marker
-map.on('click',function(e){
-  lat = e.latlng.lat;
-  lon = e.latlng.lng;
-  buffer = 52;
-  buffercircle = buffer * 0.62;
-  buffer3 = buffer * 1.13;
-  var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=cite:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
-$.ajax({
-	url: url,
-	async: true,
-	success: function(data) {
-		clickedarea = e.latlng;
-		idvertex = data.features[0].properties.id;
-		rect = L.rectangle(clickedarea.toBounds(5000));
-		//map.addLayer(rect);
-		//alert(rext);
-		//Creation of a bounding box
-        //bbox = clickedarea.toBounds(5000);
-		bxsw = rect.getBounds()._southWest.lng;
-		bysw = rect.getBounds()._southWest.lat;
-		bxne = rect.getBounds()._northEast.lng;
-		byne = rect.getBounds()._northEast.lat;
-    // var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_pie&outputformat=application/json&viewparams=idvertex:${idvertex};x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
-    var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_random_route_points&outputformat=application/json&viewparams=idvertex:${idvertex};distance:${walking_distance*0.001}`;
-		$.ajax({
-			url: url,
-			async: true,
-			success: function pie (data){
-        console.log(data)
-        if (pathLayer !== null)
-          map.removeLayer(pathLayer);
-
-        pathLayer = L.geoJSON(data,
-          { pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, selectedPointStyle);
-        }});
-        map.addLayer(pathLayer);
-			}
-		});
-
-    var url2 = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};distance:${walking_distance*0.001}`;
-    $.ajax({
-      url: url2,
-      async: true,
-      success: function pie (data){
-        console.log(data)
-        if (pathLayer !== null)
-          map.removeLayer(pathLayer);
-
-        pathLayer = L.geoJSON(data,
-          { pointToLayer: function (feature, latlng) {
-            return L.circleMarker(latlng, selectedPointStyle);
-        }});
-        map.addLayer(pathLayer);
-      }
-    });
-
-
-		var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
-		$.ajax({
-			url: url,
-			async: true,
-			success: function street (data){
-			streetnameJ = data.features[0].properties.streetname;
-			document.getElementById("streetname").setAttribute( 'value' ,streetnameJ);
-			}
-		});
-	}
-});
-	  if (BeginMarker != undefined) {
-			map.removeLayer(BeginMarker);
-	  };
-
-//Add a marker to show where you clicked.
-  BeginMarker = L.marker([lat,lon]).addTo(map);
-});
-// shortest path part (everything below is for shortest path)
-$(document).ready(function(){
-	$('input[id="Routing_test"]').click(function(){
-		if($(this).is(":not(:checked)")){
-			alert("Checkbox is unchecked.");
-		}
-		else if($(this).is(":checked")){
-			alert("Checkbox is checked.");
-			// shortest path layer geojson
-			var pathLayer = L.geoJSON(null);
-
-
-			// draggable marker for starting point. Note the marker is initialized with an initial starting position
-			var sourceMarker = L.marker([52.089149, 5.142144], {
-				draggable: true
-			})
-				.on("dragend", function(e) {
-					selectedPoint = e.target.getLatLng();
-					getVertex(selectedPoint);
-					getRoute();
-				})
-				.addTo(map);
-
-			// draggbale marker for destination point.Note the marker is initialized with an initial destination positon
-			var targetMarker = L.marker([52.092516, 5.116474], {
-				draggable: true
-			})
-				.on("dragend", function(e) {
-					selectedPoint = e.target.getLatLng();
-					getVertex(selectedPoint);
-					getRoute();
-				})
-				.addTo(map);
-
-			// function to get nearest vertex to the passed point
-			function getVertex(selectedPoint) {
-				var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:nearest_edge&outputformat=application/json&viewparams=x:${
-					selectedPoint.lng};y:${selectedPoint.lat};`;
-				$.ajax({
-					url: url,
-					async: false,
-					success: function(data) {
-						loadVertex( data, selectedPoint.toString() === sourceMarker.getLatLng().toString()
-						);
-					}
-				});
-			}
-
-			// function to update the source and target nodes as returned from geoserver for later querying
-			function loadVertex(response, isSource) {
-				var features = response.features;
-				map.removeLayer(pathLayer);
-				if (isSource) {
-					source = features[0].properties.id;
-				} else {
-					target = features[0].properties.id;
-				}
-			}
-
-			// function to get the shortest path from the give source and target nodes
-			function getRoute() {
-				var url = `${geoserverUrl}/wfs?service=WFS&version=1.0.0&request=GetFeature&typeName=cite:shortest_path&outputformat=application/json&viewparams=source:${source};target:${target};`;
-
-				$.getJSON(url, function(data) {
-					map.removeLayer(pathLayer);
-					pathLayer = L.geoJSON(data);
-					map.addLayer(pathLayer);
-				});
-			}
-			getVertex(sourceMarker.getLatLng());
-			getVertex(targetMarker.getLatLng());
-			getRoute();
+function getPosition(position) {
+    lat = position.coords.latitude
+    long = position.coords.longitude
+    map.setView(([lat, long]), 15);
 }
+//JQuery slide bar for distance
+$(function() {
+    $("#slider-range-max").slider({
+        range: "max",
+        min: 0.5,
+        max: 10,
+        value: 0.5,
+        step: 0.5,
+        slide: function(event, ui) {
+            $("#amount").val(ui.value);
+            walking_distance = ui.value;
+        }
+    });
+    $("#amount").val($("#slider-range-max").slider("value"));
 });
+
+
+//onclick actions 
+map.on('click', function(e) {
+    buffer = 52;
+    buffercircle = buffer * 0.62;
+    buffer3 = buffer * 1.13;
+	// request nearest vertex 
+    var url = `${geoserverUrl}/wfs?service=WFS&version=2.0.0&request=GetFeature&typeName=dog:nearest_vertex&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};`;
+    $.ajax({
+        url: url,
+        async: true,
+        success: function(data) {
+            clickedarea = e.latlng;
+            idvertex = data.features[0].properties.id;
+			console.log('idvertex', idvertex)
+		    // request dog route based on vertex
+            var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=dog:dogwalking_circuit_route&outputformat=application/json&viewparams=idvertex:${idvertex};distance:${walking_distance*0.0030}`;
+            $.ajax({
+                url: url,
+                async: true,
+                success: function pie(data) {
+                    console.log(data)
+                    if (pathLayer !== null)
+                        map.removeLayer(pathLayer);
+
+                    pathLayer = L.geoJSON(data, {
+                        pointToLayer: function(feature, latlng) {
+                            return L.circleMarker(latlng, selectedPointStyle);
+                        }
+                    });
+                    map.addLayer(pathLayer);
+                }
+            });
+
+			// update street name 
+			rect = L.rectangle(clickedarea.toBounds(5000));
+            bxsw = rect.getBounds()._southWest.lng;
+            bysw = rect.getBounds()._southWest.lat;
+            bxne = rect.getBounds()._northEast.lng;
+            byne = rect.getBounds()._northEast.lat;
+            var url = `${geoserverUrl}/wfs?service=WFS&version=2S.0.0&request=GetFeature&typeName=dog:nearest_edge&outputformat=application/json&viewparams=x:${e.latlng.lng};y:${e.latlng.lat};bxsw:${bxsw};bysw:${bysw};bxne:${bxne};byne:${byne};`;
+            $.ajax({
+                url: url,
+                async: true,
+                success: function street(data) {
+                    streetnameJ = data.features[0].properties.streetname;
+					if (streetnameJ  == null){
+						document.getElementById("streetname").setAttribute('value', 'n/a');
+					} else {
+						document.getElementById("streetname").setAttribute('value', streetnameJ);
+				    }
+                }
+            });
+        }
+    });
+    if (BeginMarker != undefined) {
+        map.removeLayer(BeginMarker);
+    };
+
+    //Add a marker to show where you clicked.
+    BeginMarker = L.marker([e.latlng.lat, e.latlng.lng]).addTo(map);
 });

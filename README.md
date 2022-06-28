@@ -31,19 +31,19 @@ WHERE
 GROUP BY id, the_geom
 `
 
-#### cite:dogwalking_random_route_points
+#### dog:dogwalking_random_route_points
 
 `SELECT * FROM dogwalking_RandomRoutepoints(%idvertex%,%distance%)`
 
-#### cite:dogwalking_circuit_route
+#### dog:dogwalking_circuit_route
 
 `SELECT * FROM dogwalking_CircuitRoute(%idvertex%,%distance%)`
 
-##### cite:shortest_path query
+##### dog:shortest_path query
 Deprecated
 
-##### cite:dogplaces
-- Needed for the wms map (cite:dogplaces, also requires the dog2 sdl file, which can be applied in styles)
+##### dog:dogplaces
+- Needed for the wms map (dog:dogplaces, also requires the dog2 sdl file, which can be applied in styles)
 
 ## Type validation
 
