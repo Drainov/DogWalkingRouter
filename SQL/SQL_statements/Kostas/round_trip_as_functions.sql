@@ -107,8 +107,6 @@ begin
 	CREATE TEMP TABLE tmp as
     select * from dogwalking_RandomRoutepoints(input, distance) order by random() limit 3;
 	RETURN QUERY
-	with WHERE
-  id = (SELECT id FROM edges WHERE the_geom && ST_MakeEnvelope(%bxsw%, %bysw%, %bxne%, %byne%, 4326) ORDER BY the_geom <-> ST_SetSRID(ST_MakePoint(%x%, %y%), 4326) LIMIT 1)
 	with tsp as (
 	select * from pgr_TSP( $dijkstra$
 	select * from pgr_dijkstraCostMatrix(
